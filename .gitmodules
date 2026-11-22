@@ -1,0 +1,3 @@
+[submodule "engine/kytyps5"]
+	path = engine/kytyps5
+	url = https://github.com/KytyPS5/KytyPS5.git
