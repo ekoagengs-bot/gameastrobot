@@ -16,10 +16,13 @@ identify this repository as the fork.
 1. Open the [ASTROBOT Emulator Engine workflow](https://github.com/ekoagengs-bot/gameastrobot/actions/workflows/build-engine-windows.yml).
 2. Select **Run workflow** and wait for the build to complete successfully.
 3. Download the `ASTROBOT-Emulator-Windows-x64` artifact from the completed run.
-4. Extract the ZIP and run `kyty_launcher.exe`.
+4. Extract the ZIP. The native launcher is `kyty_launcher.exe`.
 
-The existing **ASTROBOT PC** Python front end is retained as a separate
-bootstrap/diagnostic utility. It is not the PS5 emulation engine.
+To use the ASTROBOT PC desktop front end, extract the engine package into
+`%APPDATA%\\AstroBotPC\\ASTROBOT-Emulator`, open ASTROBOT PC, and click
+**OPEN EMULATOR**. The app checks this native fork folder first. The separate
+**INSTALL OFFICIAL KYTYPS5 (FALLBACK)** option downloads the upstream release
+and is not the ASTROBOT fork build.
 
 ## Build from source
 
