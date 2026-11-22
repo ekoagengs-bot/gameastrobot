@@ -1,0 +1,39 @@
+name: Build ASTROBOT PC
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "build.bat"
+      - "requirements-build.txt"
+      - ".github/workflows/build-windows.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build dependency
+        run: python -m pip install --upgrade pyinstaller
+
+      - name: Build single-file launcher
+        run: pyinstaller --noconfirm --clean --onefile --windowed --name ASTROBOT-PC src/astrobot_pc.py
+
+      - name: Upload executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: ASTROBOT-PC-Windows
+          path: dist/ASTROBOT-PC.exe
+          if-no-files-found: error
