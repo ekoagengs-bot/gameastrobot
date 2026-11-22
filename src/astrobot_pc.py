@@ -17,6 +17,7 @@ from tkinter import messagebox, ttk
 APP_NAME = "ASTROBOT PC"
 APP_DIR = Path(os.environ.get("APPDATA", str(Path.home()))) / "AstroBotPC"
 KYTY_DIR = APP_DIR / "KytyPS5"
+FORK_DIR = APP_DIR / "ASTROBOT-Emulator"
 SETTINGS_FILE = APP_DIR / "settings.json"
 RELEASE_API = "https://api.github.com/repos/KytyPS5/KytyPS5/releases/latest"
 USER_AGENT = "ASTROBOT-PC/1.0"
@@ -86,7 +87,7 @@ def find_kyty_launcher(root: Path) -> Path | None:
 class AstroBotPC(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
-        self.title(APP_NAME)
+        self.title("ASTROBOT EMULATOR")
         self.geometry("960x680")
         self.minsize(820, 580)
         self.configure(bg="#101827")
@@ -122,22 +123,23 @@ class AstroBotPC(tk.Tk):
     def _build(self) -> None:
         base = ttk.Frame(self, padding=22)
         base.pack(fill="both", expand=True)
-        ttk.Label(base, text="ASTROBOT PC", style="Title.TLabel").pack(anchor="w")
-        ttk.Label(base, text="KYTYPS5 INTEGRATED WINDOWS EDITION", style="Muted.TLabel").pack(anchor="w", pady=(2, 16))
+        ttk.Label(base, text="ASTROBOT EMULATOR", style="Title.TLabel").pack(anchor="w")
+        ttk.Label(base, text="NATIVE WINDOWS FORK • POWERED BY KYTYPS5 SOURCE", style="Muted.TLabel").pack(anchor="w", pady=(2, 16))
 
         panel = self._panel(base, "EMULATOR")
         panel.pack(fill="x", pady=(0, 14))
-        ttk.Label(panel, text="ASTROBOT PC mengelola dan menjalankan KytyPS5 dalam satu paket aplikasi.", background="#19263a", foreground="#d5e1f2", wraplength=850).pack(anchor="w")
+        ttk.Label(panel, text="Jalankan build native ASTROBOT Emulator hasil kompilasi source fork. Paket resmi KytyPS5 disediakan sebagai fallback.", background="#19263a", foreground="#d5e1f2", wraplength=850).pack(anchor="w")
         ttk.Label(panel, textvariable=self.release_var, background="#19263a", foreground="#83d8ca", font=("Segoe UI", 10, "bold")).pack(anchor="w", pady=(12, 8))
         self.progress = ttk.Progressbar(panel, mode="determinate", maximum=100)
         self.progress.pack(fill="x", pady=(0, 10))
         actions = ttk.Frame(panel, style="Panel.TFrame")
         actions.pack(fill="x")
-        self.install_btn = ttk.Button(actions, text="INSTALL / UPDATE KYTYPS5", style="Accent.TButton", command=self._install_kyty)
+        self.install_btn = ttk.Button(actions, text="INSTALL OFFICIAL KYTYPS5 (FALLBACK)", style="Accent.TButton", command=self._install_kyty)
         self.install_btn.pack(side="left")
-        self.launch_btn = ttk.Button(actions, text="OPEN KYTYPS5", command=self._launch_kyty, state="disabled")
+        self.launch_btn = ttk.Button(actions, text="OPEN EMULATOR", command=self._launch_kyty, state="disabled")
         self.launch_btn.pack(side="left", padx=10)
-        ttk.Button(actions, text="OPEN DATA FOLDER", command=self._open_data_folder).pack(side="right")
+        ttk.Button(actions, text="OPEN FORK ENGINE FOLDER", command=self._open_fork_folder).pack(side="right")
+        ttk.Button(actions, text="OPEN DATA FOLDER", command=self._open_data_folder).pack(side="right", padx=8)
 
         tabs = ttk.Notebook(base)
         tabs.pack(fill="both", expand=True)
@@ -197,15 +199,21 @@ class AstroBotPC(tk.Tk):
         return "Loader DLL ditemukan" if found else "Loader DLL tidak ditemukan"
 
     def _locate_kyty(self) -> None:
+        self.kyty_path = find_kyty_launcher(FORK_DIR) if FORK_DIR.exists() else None
+        if self.kyty_path:
+            self.release_var.set(f"ASTROBOT native fork siap: {self.kyty_path.name}")
+            self.launch_btn.configure(state="normal")
+            self.status_var.set("ASTROBOT Emulator siap dijalankan")
+            return
         self.kyty_path = find_kyty_launcher(KYTY_DIR) if KYTY_DIR.exists() else None
         if self.kyty_path:
-            self.release_var.set(f"KytyPS5 terpasang: {self.kyty_path.name}")
+            self.release_var.set(f"KytyPS5 fallback terpasang: {self.kyty_path.name}")
             self.launch_btn.configure(state="normal")
             self.status_var.set("KytyPS5 siap dijalankan")
         else:
             self.release_var.set("KytyPS5 belum terpasang")
             self.launch_btn.configure(state="disabled")
-            self.status_var.set("Klik Install / Update KytyPS5")
+            self.status_var.set("Ekstrak build ASTROBOT ke folder engine, atau pasang fallback KytyPS5")
 
     def _install_kyty(self) -> None:
         self.install_btn.configure(state="disabled")
@@ -281,6 +289,13 @@ class AstroBotPC(tk.Tk):
         except OSError as exc:
             messagebox.showerror("Tidak dapat menjalankan KytyPS5", str(exc))
             self._log(f"Launch error: {exc}")
+
+    def _open_fork_folder(self) -> None:
+        FORK_DIR.mkdir(parents=True, exist_ok=True)
+        if os.name == "nt":
+            os.startfile(str(FORK_DIR))
+        else:
+            messagebox.showinfo("Folder engine", str(FORK_DIR))
 
     def _open_data_folder(self) -> None:
         APP_DIR.mkdir(parents=True, exist_ok=True)
