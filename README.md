@@ -1,43 +1,50 @@
-# ASTROBOT PC — KytyPS5 Integrated Edition
+# ASTROBOT Emulator — Windows PS5 emulator fork
 
-ASTROBOT PC is a Windows desktop front end that installs, updates, and launches the official KytyPS5 Windows build from inside one application.
+ASTROBOT Emulator is an independent Windows-focused community fork project
+based on the open-source **KytyPS5** PlayStation 5 translation layer. The
+native engine source is tracked as a pinned Git submodule at
+`engine/kytyps5`; the build uses KytyPS5's supported fork metadata so builds
+identify this repository as the fork.
 
-**Important architecture note:** the ASTROBOT PC executable is the single user-facing app. On first use it downloads the official KytyPS5 Windows x64 release into its private application-data folder, verifies the release asset's published SHA-256 digest, extracts it, and launches Kyty's own launcher. Kyty remains a separately licensed third-party component; its binaries are not copied into this repository or merged into our source.
+> **Development status:** initial upstream source integration is in place.
+> The native engine build is provided through GitHub Actions. Astro Bot
+> compatibility and performance are not guaranteed, and this project does not
+> yet contain title-specific engine patches.
 
-## Features
-- Install/update KytyPS5 from the official GitHub Releases API.
-- Download the Windows x64 release only.
-- Verify SHA-256 when the release publishes a digest.
-- Safe ZIP extraction (rejects path traversal).
-- Launch KytyPS5 from the ASTROBOT PC interface.
-- Basic Windows, CPU, RAM and Vulkan-loader information.
-- Store emulator files and settings under `%APPDATA%\AstroBotPC`.
+## Download the native Windows build
 
-## Quick start
-1. Download this repository as ZIP and extract it.
-2. Install Python 3.10+ for Windows if you want to run from source.
-3. Double-click `run.bat`.
-4. Click **INSTALL / UPDATE KYTYPS5** and wait for the official release download.
-5. Click **OPEN KYTYPS5**. Use Kyty's own interface and follow its official documentation for adding/launching supported game dumps.
+1. Open the [ASTROBOT Emulator Engine workflow](https://github.com/ekoagengs-bot/gameastrobot/actions/workflows/build-engine-windows.yml).
+2. Select **Run workflow** and wait for the build to complete successfully.
+3. Download the `ASTROBOT-Emulator-Windows-x64` artifact from the completed run.
+4. Extract the ZIP and run `kyty_launcher.exe`.
 
-## Build a single ASTROBOT PC EXE
-Run `build.bat`. The output is `dist\ASTROBOT-PC.exe`.
+The existing **ASTROBOT PC** Python front end is retained as a separate
+bootstrap/diagnostic utility. It is not the PS5 emulation engine.
 
-The EXE is the single front-end application; on first run it obtains the KytyPS5 runtime from the official release. This avoids redistributing third-party binaries in this repository and allows the emulator to be updated independently.
+## Build from source
 
-## Official emulator
-- Project: https://github.com/KytyPS5/KytyPS5
-- Releases: https://github.com/KytyPS5/KytyPS5/releases
-- License: KytyPS5 is GPL-2.0. Review its license and notices before redistributing a combined package.
+See [docs/BUILD_ENGINE.md](docs/BUILD_ENGINE.md). Clone with
+`git clone --recurse-submodules` and build the native Qt launcher using the
+provided Windows workflow or the documented CMake commands.
+
+## Engine and attribution
+
+- Upstream project: https://github.com/KytyPS5/KytyPS5
+- Pinned source revision: `613317216495ad7c98ea0e3743cded89d4596062`
+- License: GPL-2.0-only
+- Notices and redistribution guidance: [docs/UPSTREAM_AND_LICENSE.md](docs/UPSTREAM_AND_LICENSE.md)
 
 ## System requirements
+
 - Windows 10/11 x64
-- Vulkan 1.3-capable GPU and current vendor driver (required by KytyPS5)
-- Internet access for the first KytyPS5 installation/update
-- ASTROBOT PC source run: Python 3.10+ (Tkinter included in standard Windows installer)
+- Vulkan 1.3-capable GPU and a current graphics driver
+- For building: Visual Studio 2022 C++/Clang tools, CMake, Ninja, Qt 6,
+  glslangValidator and Python 3
 
 ## Legal and compatibility notice
-KytyPS5 is experimental and game compatibility/performance is not guaranteed. ASTROBOT PC does not include or download games, PlayStation firmware, encryption keys, BIOS, or other proprietary system files. Use only game dumps and system files you are legally entitled to use. Follow KytyPS5's official documentation and compatibility list. ASTROBOT PC is an independent community front end and is not affiliated with Sony or the KytyPS5 developers.
 
-## Local application data
-`%APPDATA%\AstroBotPC\KytyPS5` — installed emulator files.
+This is an independent community fork and is not affiliated with Sony
+Interactive Entertainment or PlayStation. It does not distribute commercial
+games, PlayStation firmware, encryption keys, BIOS, or other proprietary
+system software. Use only game dumps and system files you are legally
+entitled to use. Read the upstream license and preserve all required notices.
